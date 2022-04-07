@@ -1,13 +1,43 @@
 import mongoose from 'mongoose'
 
-export default mongoose.model('User', {
-    name: String,
-    age: Number,
-    bio: String,
-    user: String,
-    location: Object,
-    posts: Array,
-    email: String,
-    prolife_pic: String,
-    bith_date: String
+const { Schema, Types: {ObjectId}} = mongoose
+
+const User = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    age: {
+        type:Number,
+        required: true
+    },
+    bio: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: String,
+        required: true
+    },
+    location: {
+        type: Object,
+        required: true
+    },
+    posts: [{
+        type: ObjectId,
+        ref: 'Post'
+    }],
+    email: {
+        type: String,
+        required: true
+    },
+    prolife_pic: {
+        type: String,
+    },
+    birth_date: {
+        type: Date,
+        required: true
+    }
 })
+
+export default mongoose.model('user', User)

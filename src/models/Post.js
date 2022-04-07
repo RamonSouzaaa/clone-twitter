@@ -1,9 +1,25 @@
 import mongoose from 'mongoose'
 
-export default mongoose.model('Post', {
-    content: String,
-    user: String,
-    create_date: Date,
-    visible: Boolean
+const { Schema } = mongoose
+
+const Post = new Schema({
+    content: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: String,
+        required: true
+    },
+    create_date: {
+        type: Date,
+        required: true
+    },
+    visible: {
+        type: Boolean,
+        required: true
+    }
 })
+
+export default mongoose.model('post', Post)
 

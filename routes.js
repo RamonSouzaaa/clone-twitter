@@ -47,11 +47,12 @@ router.route('/users')
         })
     })
     .post((req, res) => {
-        new UserService().post(req.body).then((data) => {
+        new UserService().save(req.body).then((data) => {
             res.status(STATUS_CREATED).json(data)
         })
         .catch((e) => {
             res.status(STATUS_SERVER_ERROR).json(e)
         })
     })
+    
 export default router
