@@ -22,6 +22,12 @@ class PostService {
     async update(post, data){
         return await post.updateOne(data)
     }
+
+    async delete(id){
+        return await Post.deleteOne({
+            _id: ObjectId(id)
+        })
+    }
 }
 
 export default PostService

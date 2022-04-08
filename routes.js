@@ -10,9 +10,15 @@ router.route('/posts')
 
 router.route('/posts/:id')
     .put(PostController.put)
+    .delete(PostController.delete)
 
 router.route('/users')
     .get(UserController.get)
     .post(UserController.post)
+
+router.route('/users/:id')
+    .put(UserController.put)
+    .delete(UserController.delete)
+    .get(UserController.findId)
     
 export default router
