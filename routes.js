@@ -19,6 +19,9 @@ router.route('/users')
 router.route('/users/:id')
     .put(UserController.put)
     .delete(UserController.delete)
-    .get(UserController.findId)
     
+router.get('/users/:user', UserController.findUser)
+
+router.post('/login', UserController.login)
+
 export default router

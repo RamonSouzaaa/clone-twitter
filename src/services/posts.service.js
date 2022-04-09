@@ -1,4 +1,5 @@
 import Post from '../models/Post.js'
+import User from '../models/User.js'
 import mongoose from 'mongoose'
 
 const { Types: {ObjectId}} = mongoose
@@ -15,8 +16,18 @@ class PostService {
     }
 
     async save(data){
+        const { user } = data
         const post = new Post(data)
-        return await post.save()
+        const result = await post.save()
+        await User.findOneAndUpdate({ 
+            user: user
+        }, 
+        {
+            $push: {
+                posts: result._id
+            }
+        })
+        return result
     }
 
     async update(post, data){

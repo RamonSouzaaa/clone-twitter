@@ -21,5 +21,5 @@ const Post = new Schema({
     }
 })
 
-export default mongoose.model('post', Post)
+export default mongoose.model('Post', Post)
 
