@@ -5,12 +5,12 @@ import mongoose from 'mongoose'
 const { Types: {ObjectId}} = mongoose
 
 class PostService {
-    async all(){
-        return await Post.find()
+    all(){
+        return Post.find().populate('likes')
     }
 
-    async findId(id){
-        return await Post.findOne({
+    findId(id){
+        return Post.findOne({
             _id: ObjectId(id)
         })
     }
@@ -30,14 +30,22 @@ class PostService {
         return result
     }
 
-    async update(post, data){
-        return await post.updateOne(data)
+    update(post, data){
+        return post.updateOne(data)
     }
 
-    async delete(id){
-        return await Post.deleteOne({
+    delete(id){
+        return Post.deleteOne({
             _id: ObjectId(id)
         })
+    }
+
+    like(postId, userId){
+        return Post.findByIdAndUpdate(postId, {
+            $push: {
+                likes: userId
+            }
+        }).populate('likes')
     }
 }
 

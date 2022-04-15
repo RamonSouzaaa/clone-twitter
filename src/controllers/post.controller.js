@@ -3,13 +3,18 @@ import dotenv from 'dotenv'
 import HandleHttpErrors from '../middlewares/handle-http-errors.js'
 dotenv.config()
 
-const {STATUS_CREATED, STATUS_OK, STATUS_SERVER_ERROR, STATUS_NOT_FOUND} = process.env
+const {
+    STATUS_CREATED, 
+    STATUS_OK, 
+    STATUS_SERVER_ERROR, 
+    STATUS_NOT_FOUND
+} = process.env
 
 export default {
     async get(req, res){
         try{
             const posts = await new PostService().all()
-            if(posts !== null){
+            if(posts.length > 0){
                 res.status(STATUS_OK).json(posts)
             }else{
                 throw new HandleHttpErrors('No data', STATUS_NOT_FOUND);
@@ -24,7 +29,7 @@ export default {
     async findId(req, res){
         try{
             const post = await new PostService().findId(req.params)
-            if(posts !== null){
+            if(post.length > 0){
                 res.status(STATUS_OK).json(post)
             }else{
                 throw new HandleHttpErrors('No data', STATUS_NOT_FOUND);
@@ -50,7 +55,7 @@ export default {
     async put(req, res){
         try{
             const post = await new PostService().findId(req.params)
-            if(post !== null){
+            if(post.length > 0){
                 const result = await new PostService().update(post, req.body)
                 res.status(STATUS_OK).json(result)
             }else{
@@ -66,6 +71,19 @@ export default {
     async delete(req, res){
         try{
             const result = await new PostService().delete(req.params)
+            res.status(STATUS_OK).json(result)
+        }catch(e){
+            res.status(e.code || STATUS_SERVER_ERROR).json({
+                error: e.message
+            })
+        }
+    },
+
+    async like(req, res){
+        try {
+            const { id } = req.params
+            const { id: userId} = req.decoded
+            const result = await new PostService().like(id, userId)
             res.status(STATUS_OK).json(result)
         }catch(e){
             res.status(e.code || STATUS_SERVER_ERROR).json({

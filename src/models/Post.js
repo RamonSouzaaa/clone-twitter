@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const { Schema } = mongoose
+const { Schema, Types: {ObjectId}} = mongoose
 
 const Post = new Schema({
     content: {
@@ -17,8 +17,13 @@ const Post = new Schema({
     },
     visible: {
         type: Boolean,
-        required: true
-    }
+        required: true,
+        default: true
+    },
+    likes : [{
+        type: ObjectId, 
+        ref: 'User'
+    }]
 })
 
 export default mongoose.model('Post', Post)
