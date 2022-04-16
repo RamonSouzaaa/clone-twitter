@@ -41,22 +41,7 @@ export default {
             })
         }
     },
-
-    async findId(req, res){
-        try{
-            const user = await new UserService().findId(req.params)
-            if(user){
-                res.status(STATUS_OK).json(user)
-            }else{
-                throw new HandleHttpErrors('No data', STATUS_NOT_FOUND);
-            }
-        }catch(e){
-            res.status(e.code || STATUS_SERVER_ERROR).json({
-                error: e.message
-            })
-        }
-    },
-
+    
     async findUser(req, res){
         try{
             const user = await new UserService().findUser(req.params.user)
@@ -84,8 +69,9 @@ export default {
     },
 
     async put(req, res){
+        const { id } = req.params
         try{
-            const user = await new UserService().findId(req.params)
+            const user = await new UserService().findId(id)
             if(user){
                 const result = await new UserService().update(user, req.body)
                 res.status(STATUS_OK).json(result)  

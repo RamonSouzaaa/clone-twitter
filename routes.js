@@ -10,11 +10,14 @@ router.route('/posts')
     .post(PostController.post)
 
 router.route('/posts/:id')
+    .get(PostController.findId)
     .put(PostController.put)
     .delete(PostController.delete)
 
 router.route('/posts/:id/like')
     .post(PostController.like)
+router.route('/posts/:id/reply')
+    .post(PostController.reply)
 
 //Users    
 router.route('/users')

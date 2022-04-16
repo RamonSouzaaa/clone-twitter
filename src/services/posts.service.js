@@ -6,13 +6,27 @@ const { Types: {ObjectId}} = mongoose
 
 class PostService {
     all(){
-        return Post.find().populate('likes')
+        return Post.aggregate([
+            {
+                $project: {
+                    _id: true,
+                    content: true,
+                    user: true,
+                    create_date: true,
+                    likes: {
+                        $size: "$likes"
+                    },
+                    replies: {
+                        $size: "$replies"
+                    }
+                }
+            }
+        ])
+            
     }
 
     findId(id){
-        return Post.findOne({
-            _id: ObjectId(id)
-        })
+        return Post.findById(id).populate(['likes', 'replies'])
     }
 
     async save(data){
@@ -26,7 +40,7 @@ class PostService {
             $push: {
                 posts: result._id
             }
-        })
+        }).populate(['likes', 'replies'])
         return result
     }
 
@@ -45,7 +59,16 @@ class PostService {
             $push: {
                 likes: userId
             }
-        }).populate('likes')
+        }).populate(['likes', 'replies'])
+    }
+
+    async reply(postId, data){
+        const postReply = await Post.create(data)
+        return Post.findByIdAndUpdate(postId, {
+            $push: {
+                replies: postReply._id
+            }
+        }).populate(['likes', 'replies'])
     }
 }
 

@@ -3,17 +3,29 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 
 const { Types: {ObjectId}} = mongoose
-const { Types: {String}} = mongoose.Schema
 
 class UserService {
     all(){
-        return User.find().populate('posts')
+        return User.aggregate([
+            {
+                $project: {
+                    _id: true,
+                    name: true,
+                    age: true,
+                    bio: true,
+                    user:true,
+                    email: true,
+                    birth_date: true,
+                    posts: {
+                        $size: "$posts"
+                    }
+                }
+            }
+        ])
     }
 
     findId(id){
-        return User.findOne({
-            _id: ObjectId(id)
-        }).populate('posts') 
+        return User.findById(id).populate('posts')
     }  
 
     findUser(data){
