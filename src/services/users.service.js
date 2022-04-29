@@ -18,6 +18,12 @@ class UserService {
                     birth_date: true,
                     posts: {
                         $size: "$posts"
+                    },
+                    followers: {
+                        $size: "$followers"
+                    },
+                    following: {
+                        $size: "$following"
                     }
                 }
             }
@@ -25,13 +31,13 @@ class UserService {
     }
 
     findId(id){
-        return User.findById(id).populate('posts')
+        return User.findById(id).populate(['posts', 'followers','following'])
     }  
 
     findUser(data){
         return User.findOne({
             user: data
-        }).populate('posts')
+        }).populate(['posts', 'followers','following'])
     }
 
     findEmail(email){
@@ -53,6 +59,19 @@ class UserService {
     delete(id){
         return User.deleteOne({
             _id: ObjectId(id)
+        })
+    }
+
+    async follow(id, userId){
+        const userFollow = await User.findByIdAndUpdate(id, {
+            $push: {
+                followers: userId
+            }
+        })
+        return await User.findByIdAndUpdate(userId, {
+            $push: {
+                following: userFollow
+            }
         })
     }
 }

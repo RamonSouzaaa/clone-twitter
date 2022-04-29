@@ -21,7 +21,7 @@ const createToken = (payload) => {
     return jwt.sign({
         iat: moment().unix(),
         exp: moment().add(1, 'day').unix(),
-        id: payload._id
+        user: payload
     }, TOKEN_KEY)
 }
 
@@ -98,23 +98,34 @@ export default {
 
     async login(req, res){
         const result = await new UserService().findEmail(req.body.email)
-
-        if(req.body.token){
-            const decoded = jwt.verify(req.body.token, TOKEN_KEY)
-            console.log(decoded)
-        }
-
+        
         if(result.length === 0){
             res.status(STATUS_NOT_FOUND).json({
                 error: 'User not found'
             })
         }else if(bcrypt.compareSync(req.body.password, result.password)){
+            const tokenString = createToken(result)
             res.status(STATUS_ACCETED).json({
-                token: createToken(result)
+                token: tokenString
             })
         }else{  
             res.status(STATUS_UNAUTHORIZED).json({
                 error: 'Password is incorret' 
+            })
+        }
+    },
+
+    async follow(req, res){
+        try{
+            if(req.headers.authorization){
+                const userId = req.params.id
+                const myId = req.decoded.user._id
+                const user = await new UserService().follow(myId, userId)
+                res.status(STATUS_OK).json(user)
+            }
+        }catch(e){
+            res.status(e.code || STATUS_SERVER_ERROR).json({
+                error: e.message
             })
         }
     }

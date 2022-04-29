@@ -40,7 +40,7 @@ class PostService {
             $push: {
                 posts: result._id
             }
-        }).populate(['likes', 'replies'])
+        })
         return result
     }
 
@@ -63,7 +63,7 @@ class PostService {
     }
 
     async reply(postId, data){
-        const postReply = await Post.create(data)
+        const postReply = await this.save(data)
         return Post.findByIdAndUpdate(postId, {
             $push: {
                 replies: postReply._id

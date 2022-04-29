@@ -27,6 +27,14 @@ const User = new Schema({
         type: ObjectId,
         ref: 'Post'
     }],
+    followers: [{
+        type: ObjectId, 
+        ref: 'User'
+    }],
+    following: [{
+        type: ObjectId, 
+        ref: 'User'
+    }],
     email: {
         type: String,
         required: true

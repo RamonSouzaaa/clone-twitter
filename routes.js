@@ -32,4 +32,6 @@ router.get('/users/:user', UserController.findUser)
 
 router.post('/login', UserController.login)
 
+router.post('/users/:id/follow', UserController.follow)
+
 export default router

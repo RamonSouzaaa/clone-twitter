@@ -13,7 +13,8 @@ const Post = new Schema({
     },
     create_date: {
         type: Date,
-        required: true
+        required: true,
+        default: new Date()
     },
     visible: {
         type: Boolean,

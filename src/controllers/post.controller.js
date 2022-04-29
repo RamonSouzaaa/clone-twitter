@@ -1,13 +1,15 @@
 import PostService from '../services/posts.service.js'
 import dotenv from 'dotenv'
 import HandleHttpErrors from '../middlewares/handle-http-errors.js'
+import jwt from 'jsonwebtoken'
 dotenv.config()
 
 const {
     STATUS_CREATED, 
     STATUS_OK, 
     STATUS_SERVER_ERROR, 
-    STATUS_NOT_FOUND
+    STATUS_NOT_FOUND,
+    TOKEN_KEY
 } = process.env
 
 export default {
@@ -44,7 +46,13 @@ export default {
 
     async post(req, res){
         try{
-            const post = await new PostService().save(req.body)
+            const decoded = jwt.verify(req.headers.authorization, TOKEN_KEY)                
+            const data = {
+                content: req.body.content,
+                user: decoded.user.user
+            }
+            console.log(data)
+            const post = await new PostService().save(data)
             res.status(STATUS_CREATED).json(post)
         }catch(e){
             res.status(e.code || STATUS_SERVER_ERROR).json({
@@ -83,7 +91,7 @@ export default {
     async like(req, res){
         try {
             const { id } = req.params
-            const { id: userId} = req.decoded
+            const { _id: userId} = req.decoded.user
             const result = await new PostService().like(id, userId)
             res.status(STATUS_OK).json(result)
         }catch(e){
@@ -96,7 +104,11 @@ export default {
     async reply(req, res){
         try {
             const { id } = req.params
-            const result = await new PostService().reply(id, req.body)
+            const data = {
+                content: req.body.content,
+                user: req.decoded.user.user
+            }
+            const result = await new PostService().reply(id, data)
             res.status(STATUS_OK).json(result)
         }catch(e){
             res.status(e.code || STATUS_SERVER_ERROR).json({
